@@ -1,0 +1,24 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: casdoor-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: casdoor
+      MYSQL_USER: casdoor_user
+      MYSQL_PASSWORD: casdoor_pass
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  casdoor:
+    image: ghcr.io/linxiqt/casdoor
+    container_name: casdoor
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    environment:
+      driverName: mysql
+      dataSourceName: casdoor_user:casdoor_pass@tcp(mysql:3306)/
+    ports:
+      - "8000:8000"
